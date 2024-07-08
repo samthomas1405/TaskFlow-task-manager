@@ -6,16 +6,17 @@ import Button from "../components/Button"
 import { useSelector } from 'react-redux'
 
 const Login = () => {
+    // get user
     const {user} = useSelector((state) => state.auth);
     const {register, handleSubmit, formState: {errors}} = useForm();
 
     const navigate = useNavigate();
 
     const submitHandler = async () => {
-        console.log("submit");
+        console.log("submit"); //prints out submit when user logs in
     }
     useEffect(() => {
-        user && navigate("/dashboard");
+        user && navigate("/dashboard"); //navigates user to dashboard when logged in
     },[user]
     );
 
@@ -51,7 +52,7 @@ const Login = () => {
                         </div>
 
                         <div className = 'flex flex-col gap-y-5'>
-                            <Textbox 
+                            <Textbox //input for email address
                             placeholder = "email@example.com"
                             type = "email"
                             name = "email"
@@ -59,10 +60,10 @@ const Login = () => {
                             className = 'w-full rounded-full'
                             register = {register("email", {
                                 required: "Email address is required"
-                            })}
+                            })} 
                             error = {errors.email? errors.email.message : ""}
                             />
-                            <Textbox
+                            <Textbox //input for password
                                 placeholder='Password'
                                 type='password'
                                 name='password'
@@ -75,10 +76,10 @@ const Login = () => {
                             />
 
                             <span className='text-sm text-gray-500 hover:text-blue-600 hover:underline cursor-pointer'>
-                                Forget Password?
+                                Forget Password? 
                             </span>
 
-                            <Button
+                            <Button //submit form button
                                 type='submit'
                                 label='Submit'
                                 className='w-full h-10 bg-blue-700 text-white rounded-full'

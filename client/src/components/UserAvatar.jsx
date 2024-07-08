@@ -14,14 +14,15 @@ const UserAvatar = () => {
     const navigate = useNavigate();
 
     const logoutHandler = () => {
-        console.log("logout");
+        console.log("logout"); // prints out logout when user logs out of account
     }
 
   return (
     <>
         <div>
             <Menu as = 'div' className = 'relative inline-block text-left'>
-                <div>
+                <div> 
+                    {/* create UserAvatar logo*/}
                     <Menu.Button className='w-10 h-10 2xl:w-12 2xl:h-12 items-center justify-center rounded-full bg-blue-600'>
                         <span className='text-white font-semibold'>
                             {getInitials(user?.name)}
@@ -40,6 +41,7 @@ const UserAvatar = () => {
                 >
                     <Menu.Items className = 'absolute right-0 mt-2 w-56 origin-top-right divide-gray-100 rounded-md bg-white shadow-2xl ring-1 ring-black/5 focus:outline-none'>
                         <div className = 'p-4'>
+                            {/*create item to send user to profile*/}
                             <Menu.Item>
                                 {({active}) => (
                                     <button onClick = {() => setOpen(true)} className = 'text-gray-700 group flex w-full items-center rounded-md px-2 py-2 text-base'>
@@ -48,7 +50,8 @@ const UserAvatar = () => {
                                     </button>
                                 )}
                             </Menu.Item>
-
+                            
+                            {/* create item to send user to change password page*/}
                             <Menu.Item>
                                 {({ active }) => (
                                     <button onClick={() => setOpenPassword(true)} className={`text-gray-700 group flex w-full items-center rounded-md px-2 py-2 text-base`}>
@@ -57,7 +60,8 @@ const UserAvatar = () => {
                                     </button>
                                 )}
                             </Menu.Item>
-
+                            
+                            {/* create item to logout user*/}
                             <Menu.Item>
                                 {({ active }) => (
                                     <button onClick={logoutHandler} className={`text-red-600 group flex w-full items-center rounded-md px-2 py-2 text-base`}>

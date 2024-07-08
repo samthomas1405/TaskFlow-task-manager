@@ -16,6 +16,7 @@ import Users from "./pages/Users";
 import { setOpenSidebar } from "./redux/slices/authSlice";
 
 function Layout() {
+  //obtain user
   const { user }= useSelector((state) => state.auth);
 
   const location = useLocation();
@@ -37,10 +38,12 @@ function Layout() {
       </div>
     </div>
   ) : (
+    // navigate to login page if no user exists
     <Navigate to='/log-in' state ={{ from: location }} replace />
   );
 }
 
+//function to obtain sidebar when using mobile device
 const MobileSidebar = () => {
   const { isSidebarOpen } = useSelector((state) => state.auth);
   const mobileMenuRef = useRef(null);
@@ -82,12 +85,12 @@ const MobileSidebar = () => {
 }
 
 
-
+// function to route paths in app to different elements
 function App() {
 
-  return(
-    <main className='w-full min-h-screen bg-[#f3f4f6] '>
-      <Routes>
+  return( 
+    <main className='w-full min-h-screen bg-[#f3f4f6] '> 
+      <Routes> 
         <Route element={<Layout />}>
           <Route index path='/' element={<Navigate to='/dashboard' />} />
           <Route path='/dashboard' element={<Dashboard />} />
