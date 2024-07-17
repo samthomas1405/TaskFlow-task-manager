@@ -1,10 +1,7 @@
 export function getInitials(fullName) {
     const names = fullName.split(" ");
-  
-    const initials = names.slice(0, 2).map((name) => name[0].toUpperCase());
-  
+    const initials = names.slice(0, 2).map((name) => name[0].toUpperCase());  
     const initialsStr = initials.join("");
-  
     return initialsStr;
 }
 
@@ -36,7 +33,7 @@ export const formatDate = (date) => {
 }
 
 // different colors for priorities
-  export const PRIOTITYSTYELS = {
+  export const PRIORITYSTYLES = {
     high: "text-red-600",
     medium: "text-yellow-600",
     low: "text-blue-600",

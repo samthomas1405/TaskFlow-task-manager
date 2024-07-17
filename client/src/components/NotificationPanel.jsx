@@ -79,7 +79,7 @@ const NotificationPanel = () => {
 
     //create alerts and messages
     return <>
-        <Popover classname = 'relative'>
+        <Popover className = 'relative'>
             <Popover.Button className='inline-flex items-center outline-none'>
                 <div className='w-8 h-8 flex items-center justify-center text-gray-800 relative'>
                     <IoIosNotificationsOutline className='text-2xl' />
