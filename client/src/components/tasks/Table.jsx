@@ -9,7 +9,7 @@ import UserInfo from "../UserInfo";
 import Button from "../Button";
 // import ConfirmatioDialog from "../Dialogs";
 
-
+// import icons
 const ICONS = {
     high: <MdKeyboardDoubleArrowUp />,
     medium: <MdKeyboardArrowUp />,
@@ -26,6 +26,7 @@ const Table = ({tasks}) => {
 
     const deleteHandler = () =>{};
 
+    //create table header
     const TableHeader = () => (
         <thead className='w-full border-b border-gray-300'>
             <tr className='w-full text-black  text-left'>
@@ -38,8 +39,10 @@ const Table = ({tasks}) => {
         </thead>
     );
 
+    //create each row for specific task
     const TableRow = ({task}) => (
         <tr className='border-b border-gray-200 text-gray-600 hover:bg-gray-300/10'>
+            {/* table data for task title */}
             <td className='py-2'>
                 <div className='flex items-center gap-2'>
                     <div className={clsx("w-4 h-4 rounded-full", TASK_TYPE[task.stage])} />
@@ -49,6 +52,7 @@ const Table = ({tasks}) => {
                 </div>
             </td>
 
+            {/* table data for task priority */}
             <td className='py-2'>
                 <div className={"flex gap-1 items-center"}>
                     <span className={clsx("text-lg", PRIORITYSTYLES[task?.priority])}>
@@ -60,12 +64,14 @@ const Table = ({tasks}) => {
                 </div>
             </td>
 
+            {/* table data for task creation date */}
             <td className='py-2'>
                 <span className='text-sm text-gray-600'>
                     {formatDate(new Date(task?.date))}
                 </span>
             </td>
 
+            {/* table data to display number of activities, assets, and subtasks */}
             <td className='py-2'>
                 <div className='flex items-center gap-3'>
                     <div className='flex gap-1 items-center text-sm text-gray-600'>
@@ -83,6 +89,7 @@ const Table = ({tasks}) => {
                 </div>
             </td>
 
+            {/* table data to display user info */}
             <td className='py-2'>
                 <div className='flex'>
                     {task?.team?.map((m, index) => (
@@ -96,6 +103,7 @@ const Table = ({tasks}) => {
                 </div>
             </td>
 
+            {/* table data to edit or delete task */}
             <td className='py-2 flex gap-2 md:gap-4 justify-end'>
                 <Button
                     className='text-blue-600 hover:text-blue-500 sm:px-0 text-sm md:text-base'
@@ -116,6 +124,7 @@ const Table = ({tasks}) => {
         <>
             <div className='bg-white  px-2 md:px-4 pt-4 pb-9 shadow-md rounded'>
                 <div className='overflow-x-auto'>
+                    {/* create table */}
                     <table className='w-full '>
                         <TableHeader />
                         <tbody>

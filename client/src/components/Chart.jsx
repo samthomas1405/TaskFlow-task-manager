@@ -11,6 +11,7 @@ import {
 } from "recharts"
 import { chartData } from '../assets/data'
 
+// create chart using 'recharts'
 const Chart = () => {
   return (
     <ResponsiveContainer width = {"100%"} height = {300}>

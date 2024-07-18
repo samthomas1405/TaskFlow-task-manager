@@ -35,11 +35,13 @@ const Tasks = () => {
 
   return loading ? (
     <div className = 'py-10'>
+      {/* display loading icon if page is loading */}
       <Loader />
     </div>
   ) : (
     <div className = 'w-full'>
       <div className = 'flex items-center justify-between mb-4'>
+        {/* display title of tasks page */}
         <Title title = {status ? `${status} Tasks` : 'Tasks'} />
 
         {
@@ -60,9 +62,12 @@ const Tasks = () => {
           </div>
         )}
         {
+          // display BoardView
           selected !==1 ? (
             <BoardView tasks={tasks} /> 
-          ) : (
+          ) :
+          // display ListView
+          (
             <div className = 'w-full'>
               <Table tasks = {tasks} />
             </div>

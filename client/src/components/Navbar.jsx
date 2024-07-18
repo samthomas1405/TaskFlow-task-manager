@@ -25,8 +25,10 @@ const Navbar = () => {
         </div>
 
         <div className = 'flex gap-2 items-center'>
+          {/* display notification panel */}
           < NotificationPanel />
 
+          {/* display user avatar */}
           < UserAvatar />
         </div>
     </div>

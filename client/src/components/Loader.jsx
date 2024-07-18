@@ -1,4 +1,4 @@
-
+//display dots for loading page
 const Loader = () => {
     return (
         <div className='dots-container'>

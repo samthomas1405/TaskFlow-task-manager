@@ -13,6 +13,7 @@ const Users = () => {
   const [openAction, setOpenAction] = useState(false);
   const [selected, setSelected] = useState(null);
 
+  // construct table header for users
   const TableHeader = () => (
     <thead className='border-b border-gray-300'>
       <tr className='text-black text-left'>
@@ -25,8 +26,11 @@ const Users = () => {
     </thead>
   );
 
+  // display user information
   const TableRow = ({user}) => (
     <tr className = 'border-b border-gray-200 text-gray-600 hover:bg-gray-400/10'>
+
+      {/* table data to display user initials and name */}
       <td className = 'p-2'>
         <div className = 'flex items-center gap-3'>
           <div className = 'w-9 h-9 rounded-full text-white flex items-center justify-center text-sm bg-blue-700'>
@@ -38,10 +42,14 @@ const Users = () => {
         </div>
       </td>
 
-      <td className='p-2'>{user.title}</td>
+      {/* table data to display user title */}
+      <td className='p-2'>{user.title}</td> 
+      {/* table data to display either user email or default email */}
       <td className='p-2'>{user.email || "user.email.com"}</td>
+      {/* table data to display user role */}
       <td className='p-2'>{user.role}</td>
 
+      {/* table data to check if user is active */}
       <td>
         <button
           // onClick={() => userStatusClick(user)}
@@ -51,6 +59,7 @@ const Users = () => {
         </button>
       </td>
 
+      {/* table data to edit or delete user */}
       <td className='p-2 flex gap-4 justify-end'>
         <Button
           className='text-blue-600 hover:text-blue-500 font-semibold sm:px-0'
@@ -73,6 +82,7 @@ const Users = () => {
     <div className = 'w-full md:px-1 px-0 mb-6'>
       <div className = 'flex items-center justify-between mb-8'>
         <Title title = '  Team Members' />
+        {/* button to add new user */}
         <Button
           label='Add New User'
           icon={<IoMdAdd className='text-lg' />}
@@ -84,6 +94,7 @@ const Users = () => {
       <div className='bg-white px-2 md:px-4 py-4 shadow-md rounded'>
         <div className='overflow-x-auto'>
           <table className='w-full mb-5'>
+            {/* import table code from above */}
             <TableHeader />
             <tbody>
               {summary.users?.map((user, index) => (
