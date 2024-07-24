@@ -11,6 +11,7 @@ import TaskTitle from '../components/TaskTitle';
 import BoardView from '../components/BoardView';
 import { tasks } from '../assets/data';
 import Table from '../components/tasks/Table';
+import AddTask from '../components/tasks/AddTask';
 
 // import icons
 const TABS = [
@@ -74,6 +75,8 @@ const Tasks = () => {
           )
         }
       </Tabs>
+
+      <AddTask open={open} setOpen={setOpen} />
     </div>
   )
 }

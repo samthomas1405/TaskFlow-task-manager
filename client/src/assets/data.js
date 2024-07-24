@@ -799,14 +799,14 @@ export const summary = {
       activities: [
         {
           type: "started",
-          activity: "Project completed!!",
+          activity: "Project started!!",
           date: "2024-02-08T18:13:14.717Z",
           by: { _id: "65c202d4aa62f32ffd1303cc", name: "Samuel" },
           _id: "65c51b998064dfd208b3f9",
         },
         {
           type: "commented",
-          activity: "Project completed!!",
+          activity: "Commented!!",
           date: "2024-02-08T18:13:14.717Z",
           by: { _id: "65c202d4aa62f32ffd1303cc", name: "Samuel" },
           _id: "65c51b98064df97d208b3f9",
