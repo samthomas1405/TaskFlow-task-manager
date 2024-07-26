@@ -7,7 +7,7 @@ import clsx from "clsx";
 import { FaList } from "react-icons/fa";
 import UserInfo from "../UserInfo";
 import Button from "../Button";
-// import ConfirmatioDialog from "../Dialogs";
+import ConfirmationDialog from "../Dialogs";
 
 // import icons
 const ICONS = {
@@ -137,11 +137,11 @@ const Table = ({tasks}) => {
             </div>
     
             {/* TODO */}
-            {/* <ConfirmationDialog
+            <ConfirmationDialog
                 open={openDialog}
                 setOpen={setOpenDialog}
                 onClick={deleteHandler}
-            /> */}
+            />
         </>
     );
 }
