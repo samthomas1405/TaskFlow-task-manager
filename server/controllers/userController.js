@@ -104,6 +104,7 @@ export const updateUserProfile = async (req, res) => {
             user.name = req.body.name || user.name;
             user.title = req.body.title || user.title;
             user.role = req.body.role || user.role;
+            user.email = req.body.email || user.email;
 
             const updatedUser = await user.save();
 
