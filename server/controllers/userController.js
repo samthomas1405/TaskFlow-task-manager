@@ -5,6 +5,9 @@ import { createJWT } from '../utils/index.js';
 export const registerUser = async (req, res)=> {
     try {
         const {name, email, password, isAdmin, role, title} = req.body;
+        if((role==('Admin' || 'Administrator')) || (title == ('Admin' || 'Administrator'))){
+            isAdmin =true;
+        }
 
         const userExist = await User.findOne({email});
         if(userExist){
