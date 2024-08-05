@@ -5,7 +5,7 @@ import { createJWT } from '../utils/index.js';
 export const registerUser = async (req, res)=> {
     try {
         const {name, email, password, isAdmin, role, title} = req.body;
-        if((role==('Admin' || 'Administrator')) || (title == ('Admin' || 'Administrator'))){
+        if(role==='Admin' || role ==='Administrator' || title === 'Admin' || title ==='Administrator'){
             isAdmin =true;
         }
 
