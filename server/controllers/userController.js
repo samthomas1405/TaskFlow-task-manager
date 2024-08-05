@@ -15,6 +15,9 @@ export const registerUser = async (req, res)=> {
             if(user.role==='Admin' || user.role ==='Administrator' || user.title === 'Admin' || user.title ==='Administrator'){
                 user.isAdmin =true;
             }
+            console.log(user.role);
+            console.log(user.title);
+            console.log(user.isAdmin)
             isAdmin? createJWT(res, user._id): null;
             user.password = undefined;
             res.status(201).json(user);
