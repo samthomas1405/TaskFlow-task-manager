@@ -1,8 +1,8 @@
-import clsx from "clsx";
-import moment from "moment";
-import React, { useState } from "react";
-import { FaBug, FaTasks, FaThumbsUp, FaUser } from "react-icons/fa";
-import { GrInProgress } from "react-icons/gr";
+import clsx from 'clsx';
+import moment from 'moment';
+import React, { useState } from 'react';
+import { FaBug, FaTasks, FaThumbsUp, FaUser } from 'react-icons/fa';
+import { GrInProgress } from 'react-icons/gr';
 import {
   MdKeyboardArrowDown,
   MdKeyboardArrowUp,
@@ -10,23 +10,24 @@ import {
   MdOutlineDoneAll,
   MdOutlineMessage,
   MdTaskAlt,
-} from "react-icons/md";
-import { RxActivityLog } from "react-icons/rx";
-import { useParams } from "react-router-dom";
-import { toast } from "sonner";
-import { tasks } from "../assets/data";
-import Tabs from "../components/Tabs";
-import { PRIORITYSTYLES, TASK_TYPE, getInitials } from "../utils";
-import Loader from "../components/Loader";
-import Button from "../components/Button";
-import { CartesianGrid } from "recharts";
+} from 'react-icons/md';
+import { RxActivityLog } from 'react-icons/rx';
+import { useParams } from 'react-router-dom';
+import { toast } from 'sonner';
+import { tasks } from '../assets/data';
+import Tabs from '../components/Tabs';
+import { PRIORITYSTYLES, TASK_TYPE, getInitials } from '../utils';
+import Loader from '../components/Loader';
+import Button from '../components/Button';
+import { CartesianGrid } from 'recharts';
+import { useGetSingleTaskQuery, usePostTaskActivityMutation } from '../redux/slices/api/taskApiSlice';
 
 
 const assets = [
-  "https://images.pexels.com/photos/2418664/pexels-photo-2418664.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-  "https://images.pexels.com/photos/8797307/pexels-photo-8797307.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-  "https://images.pexels.com/photos/2534523/pexels-photo-2534523.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-  "https://images.pexels.com/photos/804049/pexels-photo-804049.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+  'https://images.pexels.com/photos/2418664/pexels-photo-2418664.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+  'https://images.pexels.com/photos/8797307/pexels-photo-8797307.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+  'https://images.pexels.com/photos/2534523/pexels-photo-2534523.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+  'https://images.pexels.com/photos/804049/pexels-photo-804049.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
 ];
 
 // import icons
@@ -38,15 +39,15 @@ const ICONS = {
 
 // initialize background colors
 const bgColor = {
-  high: "bg-red-200",
-  medium: "bg-yellow-200",
-  low: "bg-blue-200",
+  high: 'bg-red-200',
+  medium: 'bg-yellow-200',
+  low: 'bg-blue-200',
 };
 
 // import icons for two tabs in task details
 const TABS = [
-  { title: "Task Detail", icon: <FaTasks /> },
-  { title: "Activities/Timeline", icon: <RxActivityLog /> },
+  { title: 'Task Detail', icon: <FaTasks /> },
+  { title: 'Activities/Timeline', icon: <RxActivityLog /> },
 ];
 
 // import icons for different stages of tasks
@@ -76,7 +77,7 @@ const TASKTYPEICON = {
       <MdOutlineDoneAll size={24} />
     </div>
   ),
-  "in progress": (
+  'in progress': (
     <div className='w-8 h-8 flex items-center justify-center rounded-full bg-violet-600 text-white'>
       <GrInProgress size={16} />
     </div>
@@ -85,20 +86,29 @@ const TASKTYPEICON = {
 
 // different stages of tasks
 const act_types = [
-  "Started",
-  "Completed",
-  "In Progress",
-  "Commented",
-  "Bug",
-  "Assigned",
+  'Started',
+  'Completed',
+  'In Progress',
+  'Commented',
+  'Bug',
+  'Assigned',
 ];
 
 
 const TaskDetails = () => {
 
-  const {id} = useParams()
+  const {id} = useParams();
+  const {data, isLoading, refetch } = useGetSingleTaskQuery(id);
   const [selected, setSelected ] = useState(0)
-  const task = tasks[3]
+  const task = data?.task;
+
+  if (isLoading) {
+    return (
+      <div className = 'py-10'>
+        <Loader />
+      </div>
+    )
+  }
   return (
     <div className = 'w-full flex flex-col gap-3 mb-4 overflow-y-hidden'>
       {/* display task title */}
@@ -143,7 +153,7 @@ const TaskDetails = () => {
 
               {/* display number of subtasks */}
               <div className='space-x-2'>
-                <span className='font-semibold'>Sub-Task :</span>
+                <span className='font-semibold'>Sub-Tasks :</span>
                 <span>{task?.subTasks?.length}</span>
               </div>
             </div>
@@ -220,7 +230,7 @@ const TaskDetails = () => {
         </>
         ) : (
         <>
-          <Activities activity = {task?.activities} id = {id}/>
+          <Activities activity = {data?.task?.activities} id = {id} refetch = {refetch}/>
         </>)
         }
       </Tabs>
@@ -228,12 +238,29 @@ const TaskDetails = () => {
   )
 }
 
-const Activities = ({activity, id}) => {
+const Activities = ({activity, id, refetch}) => {
   const [selected, setSelected] = useState(act_types[0]);
-  const [text, setText] = useState("");
-  const isLoading = false;
+  const [text, setText] = useState('');
 
-  const handleSubmit = async() => {};
+  const [postActivity, {isLoading}] = usePostTaskActivityMutation();
+
+  const handleSubmit = async() => {
+    try {
+
+      const activityData = {
+        type: selected?.toLowerCase(),
+        activity: text
+      }
+      const result = await postActivity({data: activityData, id}).unwrap();
+      setText('');
+      toast.success(result?.message);
+      refetch();
+
+    } catch (err) {
+      console.log(err);
+      toast.error(err?.data?.message || err.error);
+    }
+  };
 
   const Card = ({ item }) => {
     return (
@@ -249,9 +276,9 @@ const Activities = ({activity, id}) => {
 
         <div className='flex flex-col gap-y-1 mb-8'>
           <p className='font-semibold'>{item?.by?.name}</p>
-          <div className='text-gray-500 space-y-2'>
+          <div className='text-gray-500 space-y-2 space-x-2'>
             <span className='capitalize'>{item?.type}</span>
-            <span className='text-sm'>{moment(item?.date).fromNow()}</span>
+            <span className='text-sm '>{moment(item?.date).fromNow()}</span>
           </div>
           <div className='text-gray-700'>{item?.activity}</div>
         </div>
@@ -267,9 +294,9 @@ const Activities = ({activity, id}) => {
         <div className = 'w-full'>
           {activity?.map((el, index)=> (
             <Card
-            key = {index}
-            item = {el}
-            isConnected = {index < activity.length-1}
+              key = {index}
+              item = {el}
+              isConnected = {index < activity?.length - 1}
             />
           ))}
         </div>
@@ -297,7 +324,7 @@ const Activities = ({activity, id}) => {
             className='bg-white w-full mt-10 border border-gray-300 outline-none p-4 rounded-md focus:ring-2 ring-blue-500'
           ></textarea>
           {isLoading ? (
-            <Loading />
+            <Loader />
           ) : (
             <Button
               type='button'

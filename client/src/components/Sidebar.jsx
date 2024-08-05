@@ -5,48 +5,48 @@ import {
   MdOutlinePendingActions,
   MdSettings,
   MdTaskAlt,
-} from "react-icons/md";
-import { FaTasks, FaTrashAlt, FaUsers } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux";
-import { Link, useLocation } from "react-router-dom";
-import { setOpenSidebar } from "../redux/slices/authSlice";
-import clsx from "clsx";
+} from 'react-icons/md';
+import { FaTasks, FaTrashAlt, FaUsers } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useLocation } from 'react-router-dom';
+import { setOpenSidebar } from '../redux/slices/authSlice';
+import clsx from 'clsx';
 
 //array of different components of sidebar
 const linkData = [
   {
-    label: "Dashboard",
-    link: "dashboard",
+    label: 'Dashboard',
+    link: 'dashboard',
     icon: <MdDashboard />,
   },
   {
-    label: "Tasks",
-    link: "tasks",
+    label: 'Tasks',
+    link: 'tasks',
     icon: <FaTasks />,
   },
   {
-    label: "Completed",
-    link: "completed/completed",
+    label: 'Completed',
+    link: 'completed/completed',
     icon: <MdTaskAlt />,
   },
   {
-    label: "In Progress",
-    link: "in-progress/in progress",
+    label: 'In Progress',
+    link: 'in-progress/in progress',
     icon: <MdOutlinePendingActions />,
   },
   {
-    label: "To Do",
-    link: "todo/todo",
+    label: 'To Do',
+    link: 'todo/todo',
     icon: <MdOutlinePendingActions />,
   },
   {
-    label: "Team",
-    link: "team",
+    label: 'Team',
+    link: 'team',
     icon: <FaUsers />,
   },
   {
-    label: "Trash",
-    link: "trashed",
+    label: 'Trash',
+    link: 'trashed',
     icon: <FaTrashAlt />,
   },
 ];
@@ -58,7 +58,7 @@ const Sidebar = () => {
   const dispatch = useDispatch();
   const location = useLocation();
 
-  const path = location.pathname.split("/")[1];
+  const path = location.pathname.split('/')[1];
 
   const sidebarLinks = user?.isAdmin ? linkData : linkData.slice(0, 5); //provdide team and trash options if user is admin
 
@@ -73,8 +73,8 @@ const Sidebar = () => {
         to={el.link}
         onClick={closeSidebar}
         className={clsx(
-          "w-full lg:w-3/4 flex gap-2 px-3 py-2 rounded-full items-center text-gray-800 text-base hover:bg-[#2564ed2d]",
-          path === el.link.split("/")[0] ? "bg-blue-700 text-neutral-100" : ""
+          'w-full lg:w-3/4 flex gap-2 px-3 py-2 rounded-full items-center text-gray-800 text-base hover:bg-[#2564ed2d]',
+          path === el.link.split('/')[0] ? 'bg-blue-700 text-neutral-100' : ''
         )}
       >
         {el.icon}

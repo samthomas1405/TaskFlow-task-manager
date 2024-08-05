@@ -1,19 +1,19 @@
-import { Transition } from "@headlessui/react";
-import clsx from "clsx"
-import { Fragment, useRef } from "react";
-import { IoClose } from "react-icons/io5";
-import { useDispatch, useSelector } from "react-redux";
-import { Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
-import { Toaster } from "sonner";
-import Navbar from "./components/Navbar";
-import Sidebar from "./components/Sidebar";
-import Dashboard from "./pages/Dashboard";
-import Login from "./pages/Login";
-import TaskDetails from "./pages/TaskDetails";
-import Tasks from "./pages/Tasks";
-import Trash from "./pages/Trash";
-import Users from "./pages/Users";
-import { setOpenSidebar } from "./redux/slices/authSlice";
+import { Transition } from '@headlessui/react';
+import clsx from 'clsx'
+import { Fragment, useRef } from 'react';
+import { IoClose } from 'react-icons/io5';
+import { useDispatch, useSelector } from 'react-redux';
+import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom';
+import { Toaster } from 'sonner';
+import Navbar from './components/Navbar';
+import Sidebar from './components/Sidebar';
+import Dashboard from './pages/Dashboard';
+import Login from './pages/Login';
+import TaskDetails from './pages/TaskDetails';
+import Tasks from './pages/Tasks';
+import Trash from './pages/Trash';
+import Users from './pages/Users';
+import { setOpenSidebar } from './redux/slices/authSlice';
 
 function Layout() {
   //obtain user
@@ -65,7 +65,7 @@ const MobileSidebar = () => {
         leaveTo='opacity-x-0'
       >
         {(ref) => (
-          <div ref={(node) => (mobileMenuRef.current = node)} className={clsx( "md:hidden w-full h-full bg-black/40 transition-all duration-700 transform ", isSidebarOpen ? "translate-x-0" : "translate-x-full")} onClick={() => closeSidebar()}>
+          <div ref={(node) => (mobileMenuRef.current = node)} className={clsx( 'md:hidden w-full h-full bg-black/40 transition-all duration-700 transform ', isSidebarOpen ? 'translate-x-0' : 'translate-x-full')} onClick={() => closeSidebar()}>
             <div className='bg-white w-3/4 h-full'>
               <div className='w-full flex justify-end px-5 mt-5'>
                 <button onClick={() => closeSidebar()} className='flex justify-end items-end'>

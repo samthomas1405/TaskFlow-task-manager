@@ -1,5 +1,5 @@
-import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useRef } from "react";
+import { Dialog, Transition } from '@headlessui/react';
+import { Fragment, useRef } from 'react';
 
 const ModalWrapper = ({ open, setOpen, children }) => {
   const cancelButtonRef = useRef(null);

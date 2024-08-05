@@ -7,15 +7,26 @@ import { useForm } from 'react-hook-form';
 import SelectList from '../SelectList';
 import { BiImages } from 'react-icons/bi';
 import Button from '../Button';
+import { getStorage, ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage'
+import { app } from '../../utils/firebase'
+import { useCreateTaskMutation, useUpdateTaskMutation } from '../../redux/slices/api/taskApiSlice';
+import { toast } from 'sonner';
+import { dateFormatter } from '../../utils';
 
 const LISTS = ['TODO', 'IN PROGRESS', 'COMPLETED'];
 const PRIORITY = ['HIGH','MEDIUM','NORMAL','LOW'];
 
 const uploadedFileURLs = [];
-const AddTask = ({open, setOpen}) => {
-
-    const task = "";
-    const {register, handleSubmit, formState: {errors}} = useForm();
+const AddTask = ({open, setOpen, task}) => {
+    const defaultValues = {
+        title: task?.title || '',
+        date: dateFormatter(task?.date || new Date()),
+        team: [],
+        stage: '',
+        priority: '',
+        assets: []
+    }
+    const {register, handleSubmit, formState: {errors}} = useForm({defaultValues});
     const [team, setTeam] = useState(task?.team || []);
     const [stage, setStage] = useState(task?.stage?.toUpperCase() || LISTS[0]);
     const [priority, setPriority] = useState(
@@ -23,17 +34,86 @@ const AddTask = ({open, setOpen}) => {
     );
     const [assets, setAssets] = useState([]);
     const [uploading, setUploading] = useState(false);
-    const submitHandler = () => {};
+
+    const [createTask, {isLoading}] = useCreateTaskMutation();
+    const [updateTask, {isLoading: isUpdating}] = useUpdateTaskMutation();
+    const URLS = task?.assets ? [...task.assets] : [];
+
+    const submitHandler = async (data) => {
+        for (const file of assets){
+            setUploading(true);
+            try {
+                await uploadFile(file);
+            } catch (error) {
+                console.error('Error uploading file: ', error.message);
+                return;
+            } finally {
+                setUploading(false);
+            }
+        }
+
+        try {
+            const newData = {
+                ...data,
+                assets: [...URLS, ...uploadedFileURLs],
+                team,
+                stage,
+                priority
+            }
+
+            const res = task?._id ? await updateTask({...newData, _id: task._id}).unwrap() : await createTask(newData).unwrap();
+
+            toast.success(res.message);
+
+            setTimeout(() => {
+                setOpen(false);
+                window.location.reload();
+            },500);
+        } catch (err) {
+            console.log(err);
+            toast.error(err?.data?.message || err.error);
+        }
+    };
     const handleSelect = (e) => {
         setAssets(e.target.files);
     };
+
+    const uploadFile = async (file) => {
+        const storage = getStorage(app);
+
+        const name = new Date().getTime() + file.name;
+        const storageRef = ref(storage, name);
+
+        const uploadTask = uploadBytesResumable(storageRef, file);
+
+        return new Promise((resolve, reject) => {
+            uploadTask.on(
+                'state_changed',
+                (snapshot) => {
+                    console.log('Uploading');
+                }, 
+                (error) => {
+                    reject(error);
+                },
+                () => {
+                    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                        uploadedFileURLs.push(downloadURL);
+                        resolve();
+                    })
+                    .catch((error) => {
+                        reject(error);
+                    });
+                }
+            )
+        })
+    }
 
   return (
     <>
         <ModalWrapper open = {open} setOpen = {setOpen}>
             <form onSubmit={handleSubmit(submitHandler)}>
                 <Dialog.Title as='h2' className='text-base font-bold leading-6 text-gray-900 mb-4'>
-                    {task ? "UPDATE TASK" : "ADD TASK"}
+                    {task ? 'UPDATE TASK' : 'ADD TASK'}
                 </Dialog.Title> 
 
                 <div className = 'mt-2 flex flex-col gap-6'>
@@ -44,7 +124,7 @@ const AddTask = ({open, setOpen}) => {
                         label = 'Task Title'
                         className = 'w-full rounded'
                         register = {register('title', {required: 'Title is required' })}
-                        error = {errors.title ? errors.title.message : ""}
+                        error = {errors.title ? errors.title.message : ''}
                     />
 
                     <UserList 
@@ -67,8 +147,8 @@ const AddTask = ({open, setOpen}) => {
                                 name='date'
                                 label='Task Date'
                                 className='w-full rounded'
-                                register={register("date", {required: "Date is required!",})}
-                                error={errors.date ? errors.date.message : ""}
+                                register={register('date', {required: 'Date is required!',})}
+                                error={errors.date ? errors.date.message : ''}
                             />
                         </div>
                     </div>

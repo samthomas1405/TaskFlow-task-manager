@@ -1,20 +1,20 @@
-import React from "react";
+import React from 'react';
 import {
   MdAdminPanelSettings,
   MdKeyboardArrowDown,
   MdKeyboardArrowUp,
   MdKeyboardDoubleArrowUp,
-} from "react-icons/md";
-import { LuClipboardEdit } from "react-icons/lu";
-import { FaNewspaper, FaUsers } from "react-icons/fa";
-import { FaArrowsToDot } from "react-icons/fa6";
-import moment from "moment";
-import { summary } from "../assets/data";
-import clsx from "clsx";
-import { BGS, PRIORITYSTYLES, TASK_TYPE, getInitials } from "../utils";
-import { BiCard } from "react-icons/bi";
-import Chart from "../components/Chart";
-import UserInfo from "../components/UserInfo";
+} from 'react-icons/md';
+import { LuClipboardEdit } from 'react-icons/lu';
+import { FaNewspaper } from 'react-icons/fa';
+import { FaArrowsToDot } from 'react-icons/fa6';
+import moment from 'moment';
+import clsx from 'clsx';
+import { BGS, PRIORITYSTYLES, TASK_TYPE, getInitials } from '../utils';
+import { Chart } from '../components/Chart';
+import UserInfo from '../components/UserInfo';
+import { useGetDashboardStatsQuery } from '../redux/slices/api/taskApiSlice';
+import Loader from '../components/Loader';
 
 const TaskTable = ({tasks}) => {
   // import icons
@@ -122,8 +122,8 @@ const UserTable = ({users}) => {
 
       <td> 
         {/* displays user status */}
-        <p className={clsx("w-fit px-3 py-1 rounded-full text-sm",user?.isActive ? "bg-blue-200" : "bg-yellow-100")}>
-          {user?.isActive ? "Active" : "Disabled"}
+        <p className={clsx('w-fit px-3 py-1 rounded-full text-sm',user?.isActive ? 'bg-blue-200' : 'bg-yellow-100')}>
+          {user?.isActive ? 'Active' : 'Disabled'}
         </p>
       </td>
       {/* displays user creation date */}
@@ -146,37 +146,46 @@ const UserTable = ({users}) => {
 
 const Dashboard = () => {
 
-  const totals = summary.tasks;
+  const { data, isLoading } = useGetDashboardStatsQuery();
+
+  if(isLoading)
+    return(
+      <div className = 'py-10'>
+        <Loader />
+      </div>
+    );
+
+  const totals = data?.tasks;
   
   //stats for total, completed, in-progress, and to-do tasks
   const stats = [
     {
-      _id: "1",
-      label: "TOTAL TASKS",
-      total: summary?.totalTasks || 0,
+      _id: '1',
+      label: 'TOTAL TASKS',
+      total: data?.totalTasks || 0,
       icon: <FaNewspaper />,
-      bg: "bg-[#1d4ed8]",
+      bg: 'bg-[#1d4ed8]',
     },
     {
-      _id: "2",
-      label: "COMPLETED TASKS",
-      total: totals["completed"] || 0,
+      _id: '2',
+      label: 'COMPLETED TASKS',
+      total: totals['completed'] || 0,
       icon: <MdAdminPanelSettings />,
-      bg: "bg-[#0f766e]",
+      bg: 'bg-[#0f766e]',
     },
     {
-      _id: "3",
-      label: "TASKS IN PROGRESS ",
-      total: totals["in progress"] || 0,
+      _id: '3',
+      label: 'TASKS IN PROGRESS ',
+      total: totals['in progress'] || 0,
       icon: <LuClipboardEdit />,
-      bg: "bg-[#f59e0b]",
+      bg: 'bg-[#f59e0b]',
     },
     {
-      _id: "4",
-      label: "TO DOS",
-      total: totals["todo"],
+      _id: '4',
+      label: 'TO DOS',
+      total: totals['todo'],
       icon: <FaArrowsToDot />,
-      bg: "bg-[#be185d]" || 0,
+      bg: 'bg-[#be185d]' || 0,
     },
   ];
 
@@ -184,7 +193,7 @@ const Dashboard = () => {
   const Card = ({label, count, bg, icon}) => {
     return (
       <div className = 'w-full h-32 bg-white p-5 shadow-md rounded-md flex items-center justify-between'>
-        <div className = "h-full flex flex-1 flex-col justify-between">
+        <div className = 'h-full flex flex-1 flex-col justify-between'>
           {/* display type of tasks */}
           <p className = 'text-base text-gray-600'>
             {label} 
@@ -192,7 +201,7 @@ const Dashboard = () => {
           {/* display number of tasks */}
           <span className = 'text-2xl font-semibold'>{count}</span>
           {/* display number of tasks last month*/}
-          <span className = 'text-sm text-gray-400'>{"110 last month"}</span>
+          <span className = 'text-sm text-gray-400'>{'110 last month'}</span>
         </div>
 
         {/*create icon on right side of card */}
@@ -220,14 +229,14 @@ const Dashboard = () => {
       </div>
       <div className = 'w-full bg-white my-16 p-4 rounded shadow-sm'>
         <h4 className = 'text-xl text-gray-600 font-semibold'>Chart by Priority</h4>
-        <Chart/> {/*export data into chart */}
+        <Chart data = {data?.graphData} /> {/*export data into chart */}
       </div>
 
       <div className = 'w-full flex flex-col md:flex-row gap-4 2xl:gap-10 py-8'>
         {/* left side of dashboard displays tasks*/}
-        <TaskTable tasks = {summary.last10Task} />
+        <TaskTable tasks = {data?.last10Task} />
         {/* right side of dashboard displays users*/}
-        <UserTable users = {summary.users} />
+        <UserTable users = {data?.users} />
       </div>
     </div>
   )

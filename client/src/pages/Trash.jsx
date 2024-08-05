@@ -1,12 +1,15 @@
-import clsx from "clsx";
-import React, { useState } from "react";
-import {MdDelete,MdKeyboardArrowDown,MdKeyboardArrowUp,MdKeyboardDoubleArrowUp,MdOutlineRestore,} from "react-icons/md";
-import { tasks } from "../assets/data";
-import Title from "../components/Title";
-import Button from "../components/Button";
-import { PRIORITYSTYLES, TASK_TYPE } from "../utils";
-import AddUser from "../components/AddUser";
-import ConfirmatioDialog from "../components/Dialogs";
+import clsx from 'clsx';
+import React, { useState } from 'react';
+import {MdDelete,MdKeyboardArrowDown,MdKeyboardArrowUp,MdKeyboardDoubleArrowUp,MdOutlineRestore,} from 'react-icons/md';
+import { tasks } from '../assets/data';
+import Title from '../components/Title';
+import Button from '../components/Button';
+import { PRIORITYSTYLES, TASK_TYPE } from '../utils';
+import AddUser from '../components/AddUser';
+import ConfirmatioDialog from '../components/Dialogs';
+import { useDeleteRestoreTaskMutation, useGetAllTaskQuery } from '../redux/slices/api/taskApiSlice';
+import Loader from '../components/Loader';
+import { toast } from 'sonner';
 
 // import icons
 const ICONS = {
@@ -20,33 +23,85 @@ const Trash = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [open, setOpen] = useState(false);
   const [msg, setMsg] = useState(null);
-  const [type, setType] = useState("delete");
-  const [selected, setSelected] = useState("");
+  const [type, setType] = useState('delete');
+  const [selected, setSelected] = useState('');
+
+  const {data, isLoading, refetch} = useGetAllTaskQuery({
+    strQuery: '',
+    isTrashed: 'true',
+    search: ''
+  });
+
+  const [deleteRestoreTask] = useDeleteRestoreTaskMutation();
+
+  const deleteRestoreHandler = async() => {
+    try {
+      let result;
+      switch (type) {
+        case 'delete':
+          result = await deleteRestoreTask({
+            id: selected, actionType: 'delete'
+          }).unwrap();
+          break;
+        case 'deleteAll':
+          result = await deleteRestoreTask({
+            id: selected, actionType: 'deleteAll'
+          }).unwrap();
+          break;
+        case 'restore':
+          result = await deleteRestoreTask({
+            id: selected, actionType: 'restore'
+          }).unwrap();
+          break;
+        case 'restoreAll':
+          result = await deleteRestoreTask({
+            id: selected, actionType: 'restoreAll'
+          }).unwrap();
+          break;
+      }
+      toast.success(result?.message);
+      setTimeout(() => {
+        setOpenDialog(false);
+        refetch();
+      }, 500)
+    } catch (err) {
+      console.log(err);
+      toast.error(err?.data?.message || err.error);
+    }
+  }
 
   const deleteAllClick = () => {
-    setType("deleteAll");
-    setMsg("Do you want to permenantly delete all records?");
+    setType('deleteAll');
+    setMsg('Do you want to permenantly delete all records?');
     setOpenDialog(true);
   };
 
   const restoreAllClick = () => {
-    setType("restoreAll");
-    setMsg("Do you want to restore all records?");
+    setType('restoreAll');
+    setMsg('Do you want to restore all records?');
     setOpenDialog(true);
   };
 
   const deleteClick = (id) => {
-    setType("delete");
+    setType('delete');
     setSelected(id);
     setOpenDialog(true);
   };
 
   const restoreClick = (id) => {
     setSelected(id);
-    setType("restore");
-    setMsg("Do you want to restore the selected record?");
+    setType('restore');
+    setMsg('Do you want to restore the selected record?');
     setOpenDialog(true);
   };
+
+  if (isLoading) {
+    return (
+      <div className = 'py-10'>
+        <Loader />
+      </div>
+    )
+  }
 
   // table header layout for tasks
   const TableHeader = () => (
@@ -67,7 +122,7 @@ const Trash = () => {
       <td className='py-2'>
         <div className='flex items-center gap-2'>
           {/* display stage of task through icon*/}
-          <div className={clsx("w-4 h-4 rounded-full", TASK_TYPE[item.stage])}/>
+          <div className={clsx('w-4 h-4 rounded-full', TASK_TYPE[item.stage])}/>
           {/* display name of task within two lines */}
           <p className='w-full line-clamp-2 text-base text-black'>
             {item?.title}
@@ -77,8 +132,8 @@ const Trash = () => {
 
       {/* table data for task priority */}
       <td className='py-2 capitalize'>
-        <div className={"flex gap-1 items-center"}>
-          <span className={clsx("text-lg", PRIORITYSTYLES[item?.priority])}>
+        <div className={'flex gap-1 items-center'}>
+          <span className={clsx('text-lg', PRIORITYSTYLES[item?.priority])}>
             {ICONS[item?.priority]}
           </span>
           <span className=''>{item?.priority}</span>
@@ -139,7 +194,7 @@ const Trash = () => {
             <table className='w-full mb-5'>
               <TableHeader />
               <tbody>
-                {tasks?.map((tk, id) => (
+                {data?.tasks?.map((tk, id) => (
                   <TableRow key={id} item={tk} />
                 ))}
               </tbody>

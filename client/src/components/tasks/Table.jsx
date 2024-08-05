@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
 import { MdAttachFile, MdKeyboardArrowDown, MdKeyboardArrowUp, MdKeyboardDoubleArrowUp } from 'react-icons/md';
-import { BiMessageAltDetail } from "react-icons/bi";
-import { toast } from "sonner";
-import { BGS, PRIORITYSTYLES, TASK_TYPE, formatDate } from "../../utils";
-import clsx from "clsx";
-import { FaList } from "react-icons/fa";
-import UserInfo from "../UserInfo";
-import Button from "../Button";
-import ConfirmationDialog from "../Dialogs";
+import { BiMessageAltDetail } from 'react-icons/bi';
+import { BGS, PRIORITYSTYLES, TASK_TYPE, formatDate } from '../../utils';
+import clsx from 'clsx';
+import { FaList } from 'react-icons/fa';
+import UserInfo from '../UserInfo';
+import Button from '../Button';
+import ConfirmationDialog from '../Dialogs';
+import { useTrashTaskMutation } from '../../redux/slices/api/taskApiSlice';
+import {toast} from 'sonner';
+import AddTask from './AddTask';
 
 // import icons
 const ICONS = {
@@ -19,12 +21,37 @@ const ICONS = {
 const Table = ({tasks}) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [selected, setSelected] = useState(null);
+    const [openEdit, setOpenEdit] = useState(false);
+
+    const [trashTask] = useTrashTaskMutation();
+
     const deleteClicks = (id) =>{
         setSelected(id);
         setOpenDialog(true);
     };
 
-    const deleteHandler = () =>{};
+    const editTaskHandler = (el) => {
+        setSelected(el);
+        setOpenEdit(true);
+    }
+
+    const deleteHandler = async () =>{
+        try {
+            const result = await trashTask({
+                id: selected,
+                isTrash: 'trash'
+            }).unwrap();
+            toast.success(result?.message);
+
+            setTimeout(() => {
+                setOpenDialog(false);
+                window.location.reload();
+            },500);
+        } catch (err) {
+            console.log(err);
+            toast.error(err?.data?.message ||err.error);
+        }
+    };
 
     //create table header
     const TableHeader = () => (
@@ -45,7 +72,7 @@ const Table = ({tasks}) => {
             {/* table data for task title */}
             <td className='py-2'>
                 <div className='flex items-center gap-2'>
-                    <div className={clsx("w-4 h-4 rounded-full", TASK_TYPE[task.stage])} />
+                    <div className={clsx('w-4 h-4 rounded-full', TASK_TYPE[task.stage])} />
                     <p className='w-full line-clamp-2 text-base text-black'>
                         {task?.title}
                     </p>
@@ -54,8 +81,8 @@ const Table = ({tasks}) => {
 
             {/* table data for task priority */}
             <td className='py-2'>
-                <div className={"flex gap-1 items-center"}>
-                    <span className={clsx("text-lg", PRIORITYSTYLES[task?.priority])}>
+                <div className={'flex gap-1 items-center'}>
+                    <span className={clsx('text-lg', PRIORITYSTYLES[task?.priority])}>
                         {ICONS[task?.priority]}
                     </span>
                     <span className='capitalize line-clamp-1'>
@@ -95,7 +122,7 @@ const Table = ({tasks}) => {
                     {task?.team?.map((m, index) => (
                         <div
                             key={m._id}
-                            className={clsx("w-7 h-7 rounded-full text-white flex items-center justify-center text-sm -mr-1", BGS[index % BGS?.length])}
+                            className={clsx('w-7 h-7 rounded-full text-white flex items-center justify-center text-sm -mr-1', BGS[index % BGS?.length])}
                         >
                             <UserInfo user={m} />
                         </div>
@@ -109,6 +136,7 @@ const Table = ({tasks}) => {
                     className='text-blue-600 hover:text-blue-500 sm:px-0 text-sm md:text-base'
                     label='Edit'
                     type='button'
+                    onClick = {() => editTaskHandler(task)}
                 />
 
                 <Button
@@ -136,12 +164,18 @@ const Table = ({tasks}) => {
                 </div>
             </div>
     
-            {/* TODO */}
             <ConfirmationDialog
                 open={openDialog}
                 setOpen={setOpenDialog}
                 onClick={deleteHandler}
             />
+
+            <AddTask
+                open={openEdit}
+                setOpen={setOpenEdit}
+                task={selected}
+                key={new Date().getTime()}
+            />  
         </>
     );
 }

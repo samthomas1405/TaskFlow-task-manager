@@ -7,23 +7,24 @@ import Title from '../components/Title';
 import { IoMdAdd } from 'react-icons/io';
 import Button from '../components/Button';
 import Tabs from '../components/Tabs';
+import { tasks } from "../assets/data";
 import TaskTitle from '../components/TaskTitle';
 import BoardView from '../components/BoardView';
-import { tasks } from '../assets/data';
 import Table from '../components/tasks/Table';
 import AddTask from '../components/tasks/AddTask';
+import { useGetAllTaskQuery } from '../redux/slices/api/taskApiSlice';
 
 // import icons
 const TABS = [
-  { title: "Board View", icon: <MdGridView /> },
-  { title: "List View", icon: <FaList /> },
+  { title: 'Board View', icon: <MdGridView /> },
+  { title: 'List View', icon: <FaList /> },
 ];
 
 // set colors for task types
 const TASK_TYPE = {
-  todo: "bg-blue-600",
-  "in progress": "bg-yellow-600",
-  completed: "bg-green-600",
+  todo: 'bg-blue-600',
+  'in progress': 'bg-yellow-600',
+  completed: 'bg-green-600',
 };
 
 const Tasks = () => {
@@ -32,9 +33,15 @@ const Tasks = () => {
   const [selected, setSelected] = useState(0);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const status = params?.status || ""
+  const status = params?.status || ''
 
-  return loading ? (
+  const {data, isLoading} = useGetAllTaskQuery({
+    strQuery: status,
+    isTrashed: '',
+    search: ''
+  })
+
+  return isLoading ? (
     <div className = 'py-10'>
       {/* display loading icon if page is loading */}
       <Loader />
@@ -65,12 +72,12 @@ const Tasks = () => {
         {
           // display BoardView
           selected !==1 ? (
-            <BoardView tasks={tasks} /> 
+            <BoardView tasks={data?.tasks} /> 
           ) :
           // display ListView
           (
             <div className = 'w-full'>
-              <Table tasks = {tasks} />
+              <Table tasks = {data?.tasks} />
             </div>
           )
         }

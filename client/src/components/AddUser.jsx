@@ -1,18 +1,20 @@
-import React from "react";
-import { useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
-import ModalWrapper from "./ModalWrapper";
-import { Dialog } from "@headlessui/react";
-import Textbox from "./Textbox";
-import Loading from "./Loader";
-import Button from "./Button";
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
+import ModalWrapper from './ModalWrapper';
+import { Dialog } from '@headlessui/react';
+import Textbox from './Textbox';
+import Loading from './Loader';
+import Button from './Button';
+import { useRegisterMutation } from '../redux/slices/api/authApiSlice';
+import { setCredentials } from '../redux/slices/authSlice';
+import { useUpdateUserMutation } from '../redux/slices/api/userApiSlice';
+import { toast } from 'sonner';
 
 const AddUser = ({open, setOpen, userData}) => {
 
     let defaultValues = userData ?? {};
     const { user } = useSelector((state) => state.auth);
-
-    const isLoading = false, isUpdating = false;
 
     const {
         register,
@@ -20,7 +22,32 @@ const AddUser = ({open, setOpen, userData}) => {
         formState: { errors },
     } = useForm({ defaultValues });
 
-    const handleOnSubmit = () => {};
+    const dispatch = useDispatch();
+    const [addNewUser, {isLoading}] = useRegisterMutation();
+    const [updateUser, {isLoading: isUpdating}] = useUpdateUserMutation();
+
+    const handleOnSubmit = async(data) => {
+        try {
+            if(userData){
+                const result = await updateUser(data).unwrap();
+                toast.success('Profile updated successfully');
+
+                if(userData?._id === user._id){
+                    dispatch(setCredentials({...result.user}))
+                }
+            } else {
+                await addNewUser({...data, password: data.email}).unwrap();
+                toast.success('New User added successfully');
+            }
+
+            setTimeout(()=>{
+                setOpen(false);
+                window.location.reload();
+            },1500)
+        } catch (error) {
+            toast.error('Something went wrong')
+        }
+    };
 
     return (
         <>
@@ -30,7 +57,7 @@ const AddUser = ({open, setOpen, userData}) => {
                         as='h2'
                         className='text-base font-bold leading-6 text-gray-900 mb-4'
                     >
-                        {userData ? "UPDATE PROFILE" : "ADD NEW USER"}
+                        {userData ? 'UPDATE PROFILE' : 'ADD NEW USER'}
                     </Dialog.Title>
                     <div className='mt-2 flex flex-col gap-6'>
                         <Textbox
@@ -39,8 +66,8 @@ const AddUser = ({open, setOpen, userData}) => {
                             name='name'
                             label='Full Name'
                             className='w-full rounded'
-                            register={register("name", {required: "Full name is required!",})}
-                            error={errors.name ? errors.name.message : ""}
+                            register={register('name', {required: 'Full name is required!',})}
+                            error={errors.name ? errors.name.message : ''}
                         />
 
                         <Textbox
@@ -49,8 +76,8 @@ const AddUser = ({open, setOpen, userData}) => {
                             name='title'
                             label='Title'
                             className='w-full rounded'
-                            register={register("title", {required: "Title is required!",})}
-                            error={errors.title ? errors.title.message : ""}
+                            register={register('title', {required: 'Title is required!',})}
+                            error={errors.title ? errors.title.message : ''}
                         />
 
                         <Textbox
@@ -59,8 +86,8 @@ const AddUser = ({open, setOpen, userData}) => {
                             name='email'
                             label='Email Address'
                             className='w-full rounded'
-                            register={register("email", {required: "Email Address is required!",})}
-                         error={errors.email ? errors.email.message : ""}
+                            register={register('email', {required: 'Email Address is required!',})}
+                         error={errors.email ? errors.email.message : ''}
                         />
 
                         <Textbox
@@ -69,8 +96,8 @@ const AddUser = ({open, setOpen, userData}) => {
                             name='role'
                             label='Role'
                             className='w-full rounded'
-                            register={register("role", {required: "User role is required!",})}
-                            error={errors.role ? errors.role.message : ""}
+                            register={register('role', {required: 'User role is required!',})}
+                            error={errors.role ? errors.role.message : ''}
                         />
                     </div>
 

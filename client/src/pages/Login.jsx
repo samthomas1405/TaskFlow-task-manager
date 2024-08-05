@@ -1,9 +1,13 @@
 import React, { useEffect } from 'react'
-import {useForm} from "react-hook-form"
+import {useForm} from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import Textbox from "../components/Textbox"
-import Button from "../components/Button"
-import { useSelector } from 'react-redux'
+import Textbox from '../components/Textbox'
+import Button from '../components/Button'
+import { useDispatch, useSelector } from 'react-redux'
+import { useLoginMutation } from '../redux/slices/api/authApiSlice'
+import { toast } from 'sonner'
+import { setCredentials } from '../redux/slices/authSlice'
+import Loader from '../components/Loader'
 
 const Login = () => {
     // get user
@@ -11,12 +15,22 @@ const Login = () => {
     const {register, handleSubmit, formState: {errors}} = useForm();
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const [login, {isLoading}] = useLoginMutation()
 
-    const submitHandler = async () => {
-        console.log("submit"); //prints out submit when user logs in
+    const submitHandler = async (data) => {
+        try {
+            const result = await login(data).unwrap();
+            
+            dispatch(setCredentials(result));
+            navigate('/')
+        } catch (error) {
+            console.log(error);
+            toast.error(error?.data?.message || error.message);
+        }
     }
     useEffect(() => {
-        user && navigate("/dashboard"); //navigates user to dashboard when logged in
+        user && navigate('/dashboard'); //navigates user to dashboard when logged in
     },[user]
     );
 
@@ -53,15 +67,15 @@ const Login = () => {
 
                         <div className = 'flex flex-col gap-y-5'>
                             <Textbox //input for email address
-                            placeholder = "email@example.com"
-                            type = "email"
-                            name = "email"
-                            label = "Email Address"
+                            placeholder = 'email@example.com'
+                            type = 'email'
+                            name = 'email'
+                            label = 'Email Address'
                             className = 'w-full rounded-full'
-                            register = {register("email", {
-                                required: "Email address is required"
+                            register = {register('email', {
+                                required: 'Email address is required'
                             })} 
-                            error = {errors.email? errors.email.message : ""}
+                            error = {errors.email? errors.email.message : ''}
                             />
                             <Textbox //input for password
                                 placeholder='Password'
@@ -69,21 +83,25 @@ const Login = () => {
                                 name='password'
                                 label='Password'
                                 className='w-full rounded-full'
-                                register={register("password", {
-                                    required: "Password is required",
+                                register={register('password', {
+                                    required: 'Password is required',
                                 })}
-                                error={errors.password ? errors.password.message : ""}
+                                error={errors.password ? errors.password.message : ''}
                             />
 
                             <span className='text-sm text-gray-500 hover:text-blue-600 hover:underline cursor-pointer'>
                                 Forget Password? 
                             </span>
 
-                            <Button //submit form button
-                                type='submit'
-                                label='Submit'
-                                className='w-full h-10 bg-blue-700 text-white rounded-full'
-                            />
+                            {isLoading ? (
+                                <Loader />
+                             ) : (
+                                <Button //submit form button
+                                    type='submit'
+                                    label='Submit'
+                                    className='w-full h-10 bg-blue-700 text-white rounded-full'
+                                />
+                            )}
                         </div>
                     </form>
                 </div>

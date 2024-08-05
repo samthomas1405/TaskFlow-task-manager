@@ -1,7 +1,7 @@
-import { Listbox, Transition } from "@headlessui/react";
-import React, { Fragment } from "react";
-import { BsChevronExpand } from "react-icons/bs";
-import { MdCheck } from "react-icons/md";
+import { Listbox, Transition } from '@headlessui/react';
+import React, { Fragment } from 'react';
+import { BsChevronExpand } from 'react-icons/bs';
+import { MdCheck } from 'react-icons/md';
 
 const SelectList = ({ lists, selected, setSelected, label }) => {
   return (
@@ -32,12 +32,12 @@ const SelectList = ({ lists, selected, setSelected, label }) => {
                         {lists.map((list, index) => (
                             <Listbox.Option
                                 key={index}
-                                className={({ active }) => `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? "bg-amber-100 text-amber-900" : "text-gray-900"}`}
+                                className={({ active }) => `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-amber-100 text-amber-900' : 'text-gray-900'}`}
                                 value={list}
                             >
                                 {({ selected }) => (
                                     <>
-                                        <span className={`block truncate ${selected ? "font-medium" : "font-normal"}`}>
+                                        <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
                                             {list}
                                         </span>
                                         {selected ? 

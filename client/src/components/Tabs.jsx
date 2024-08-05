@@ -1,7 +1,7 @@
-import { Tab } from "@headlessui/react";
+import { Tab } from '@headlessui/react';
 
 function classNames(...classes) {
-    return classes.filter(Boolean).join(" ");
+    return classes.filter(Boolean).join(' ');
 }
 
 export default function Tabs ({tabs, setSelected, children})  {

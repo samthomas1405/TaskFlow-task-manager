@@ -4,9 +4,11 @@ import  Button from '../components/Button';
 import { IoMdAdd } from 'react-icons/io';
 import { summary } from '../assets/data';
 import { getInitials } from '../utils';
-import clsx from "clsx";
+import clsx from 'clsx';
 import ConfirmationDialog, { UserAction } from '../components/Dialogs';
 import AddUser from '../components/AddUser';
+import { useDeleteUserMutation, useGetTeamListQuery, useUserActionMutation } from '../redux/slices/api/userApiSlice';
+import { toast } from 'sonner';
 
 const Users = () => {
 
@@ -15,8 +17,44 @@ const Users = () => {
   const [openAction, setOpenAction] = useState(false);
   const [selected, setSelected] = useState(null);
 
-  const userActionHandler = () => {};
-  const deleteHandler = () => {};
+  const {data, isLoading, refetch} = useGetTeamListQuery();
+  const [deleteUser] = useDeleteUserMutation();
+  const [userAction] = useUserActionMutation();
+
+  const userActionHandler = async () => {
+    try {
+      const result = await userAction({
+        isActive: !selected?.isActive,
+        id: selected?._id
+      });
+
+      refetch();
+      toast.success(result.data.message);
+      setSelected(null);
+      setTimeout(() => {
+        setOpenAction(false);
+      }, 500);
+    } catch (error) {
+      console.log(error);
+      toast.error(err?.data?.message || err.error);
+    }
+  };
+
+  const deleteHandler = async () => {
+    try {
+      const result = await deleteUser(selected);
+
+      refetch();
+      toast.success('Deleted successfully');
+      setSelected(null);
+      setTimeout(() => {
+        setOpenDialog(false);
+      }, 500);
+    } catch (error) {
+      console.log(error);
+      toast.error(err?.data?.message || err.error);
+    }
+  };
 
   const deleteClick = (id) => {
     setSelected(id);
@@ -28,6 +66,10 @@ const Users = () => {
     setOpen(true);
   };
 
+  const userStatusClick = (el) => {
+    setSelected(el);
+    setOpenAction(true);
+  };
   // construct table header for users
   const TableHeader = () => (
     <thead className='border-b border-gray-300'>
@@ -60,17 +102,17 @@ const Users = () => {
       {/* table data to display user title */}
       <td className='p-2'>{user.title}</td> 
       {/* table data to display either user email or default email */}
-      <td className='p-2'>{user.email || "user.email.com"}</td>
+      <td className='p-2'>{user.email || 'user.email.com'}</td>
       {/* table data to display user role */}
       <td className='p-2'>{user.role}</td>
 
       {/* table data to check if user is active */}
       <td>
         <button
-          // onClick={() => userStatusClick(user)}
-          className={clsx('w-fit px-4 py-1 rounded-full', user?.isActive ? "bg-blue-200" : "bg-yellow-100")}
+          onClick={() => userStatusClick(user)}
+          className={clsx('w-fit px-4 py-1 rounded-full', user?.isActive ? 'bg-blue-200' : 'bg-yellow-100')}
         >
-          {user?.isActive ? "Active" : "Disabled"}
+          {user?.isActive ? 'Active' : 'Disabled'}
         </button>
       </td>
 
@@ -113,7 +155,7 @@ const Users = () => {
               {/* import table code from above */}
               <TableHeader />
               <tbody>
-                {summary.users?.map((user, index) => (
+                {data?.map((user, index) => (
                   <TableRow key={index} user={user} />
                 ))}
               </tbody>

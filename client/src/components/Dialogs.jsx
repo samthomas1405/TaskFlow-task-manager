@@ -83,7 +83,7 @@ export function UserAction({ open, setOpen, onClick = () => {} }) {
 
                     {/* deactivation confirmation text */}
                     <p className='text-center text-gray-500'>
-                        {'Are you sure you want to activate or deactive this account?'}
+                        {'Are you sure you want to activate or deactivate this account?'}
                     </p>
 
                     <div className='bg-gray-50 py-3 sm:flex sm:flex-row-reverse gap-4'>
