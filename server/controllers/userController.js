@@ -5,9 +5,6 @@ import { createJWT } from '../utils/index.js';
 export const registerUser = async (req, res)=> {
     try {
         const {name, email, password, isAdmin, role, title} = req.body;
-        if(role==='Admin' || role ==='Administrator' || title === 'Admin' || title ==='Administrator'){
-            isAdmin =true;
-        }
 
         const userExist = await User.findOne({email});
         if(userExist){
@@ -15,6 +12,9 @@ export const registerUser = async (req, res)=> {
         }
         const user = await User.create({name, email, password, isAdmin, role, title});
         if(user) {
+            if(user.role==='Admin' || user.role ==='Administrator' || user.title === 'Admin' || user.title ==='Administrator'){
+                user.isAdmin =true;
+            }
             isAdmin? createJWT(res, user._id): null;
             user.password = undefined;
             res.status(201).json(user);
