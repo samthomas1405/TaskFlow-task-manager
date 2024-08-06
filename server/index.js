@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 5000;
 const app = express();
 
 app.use(cors({
-    origin: ['http://localhost:3000', 'https://app.taskflow-manager.com'],
+    origin: ['http://localhost:3000', 'https://taskflow-manager.com'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
 }))
