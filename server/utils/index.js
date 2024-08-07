@@ -19,7 +19,8 @@ export const createJWT = (res, userId) => {
         httpOnly:true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'Strict',
-        maxAge: 1*24*60*60*1000
+        maxAge: 1*24*60*60*1000,
+        domain: '.taskflow-manager.com'
     });
 }
 
