@@ -4,5 +4,13 @@ TaskFlow is a cloud-based task manager web application that facilitates and stre
 
 ## General Features
 1. Authentication and Authorization
-* User login with secure authentication
-* Role-based access control
+  * User login with secure authentication
+  * Role-based access control
+
+2. Profile Management
+   * Update user profile
+   * Change password securely
+
+3. Dashboard
+   * Provide a summary of tasks
+   * Filter tasks into todo, in progress, and completed
