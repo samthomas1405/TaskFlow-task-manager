@@ -8,8 +8,8 @@ TaskFlow is a cloud-based task manager web application that facilitates and stre
   * Role-based access control
 
 2. Profile Management
- * Update user profile
- * Change password securely
+   * Update user profile
+   * Change password securely
 
 3. Dashboard
    * Provide a summary of tasks
