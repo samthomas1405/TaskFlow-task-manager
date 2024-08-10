@@ -29,3 +29,18 @@ TaskFlow is a cloud-based task manager web application that facilitates and stre
 2. Task Management
    * Assign tasks to users with priority levels (high, medium, normal, low)
    * Permanently delete tasks
+  
+## Technologies Used
+* Frontend
+   * React (Vite)
+   * Redux Toolkit for State Management
+   * Tailwind CSS
+   * Headless UI
+ 
+* Backend
+   * Node.js
+   * Express.js
+ 
+* Database
+   * MongoDB
+   * Firebase
