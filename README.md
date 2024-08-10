@@ -14,3 +14,18 @@ TaskFlow is a cloud-based task manager web application that facilitates and stre
 3. Dashboard
    * Provide a summary of tasks
    * Filter tasks into todo, in progress, and completed
+
+4. Task Details
+   * Change task status
+   * View detailed task information including subtasks
+   * Add comments and updates to tasks
+   * Add and delete tasks
+  
+## Admin Features
+1. User management
+   * Create and delete admin and member accounts
+   * Disable and activate admin and member accounts
+  
+2. Task Management
+   * Assign tasks to users with priority levels (high, medium, normal, low)
+   * Permanently delete tasks
