@@ -54,15 +54,20 @@ const TaskCard = ({task}) => {
                             <span>0/{task?.subTasks?.length}</span>
                         </div>
                     </div>
-                    <div className = 'flex flex-row-reverse'>
-                        {task?.team?.map((m, index) => (
-                            <div
-                            key = {index}
+                    <div className='flex'>
+                        {task?.team?.slice(0, 7).map((m, index) => (
+                        <div
+                            key={index}
                             className={clsx('w-7 h-7 rounded-full text-white flex items-center justify-center text-sm -mr-1', BGS[index % BGS?.length])}
-                            >
-                                <UserInfo user = {m} />
-                            </div>
+                        >
+                            <UserInfo user={m} />
+                        </div>
                         ))}
+                        {task?.team?.length > 7 && (
+                            <div className='w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm text-gray-600'>
+                                +{task.team.length - 7}
+                            </div>
+                        )}
                     </div>
                 </div>
 
