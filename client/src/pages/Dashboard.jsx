@@ -54,13 +54,20 @@ const TaskTable = ({tasks}) => {
     </td>
 
     <td className ='py-2'>
-      <div className = 'flex'>
-        {task.team.map((m, index) => (
-          <div key = {index} className={clsx('w-7 h-7 rounded-full text-white flex items-center justify-center text-sm -mr-1', BGS[index % BGS.length])}>
-            {/* display team members assigned to specific task */}
-            <UserInfo user = {m} />
+      <div className='flex'>
+        {task?.team?.slice(0, 7).map((m, index) => (
+          <div
+            key={index}
+            className={clsx('w-7 h-7 rounded-full text-white flex items-center justify-center text-sm -mr-1', BGS[index % BGS?.length])}
+           >
+            <UserInfo user={m} />
           </div>
         ))}
+        {task?.team?.length > 7 && (
+          <div className='w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm text-gray-600'>
+            +{task.team.length - 7}
+          </div>
+         )}
       </div>
     </td>
     <td className = 'py-2 hidden md:block'>
@@ -122,8 +129,8 @@ const UserTable = ({users}) => {
 
       <td> 
         {/* displays user status */}
-        <p className={clsx('w-fit px-3 py-1 rounded-full text-sm',user?.isActive ? 'bg-blue-200' : 'bg-yellow-100')}>
-          {user?.isActive ? 'Active' : 'Disabled'}
+        <p className={clsx('w-fit px-3 py-1 rounded-full text-sm', !user?.isActive ? 'bg-blue-200' : 'bg-yellow-100')}>
+          {!user?.isActive ? 'Active' : 'Disabled'}
         </p>
       </td>
       {/* displays user creation date */}
@@ -200,8 +207,6 @@ const Dashboard = () => {
           </p>
           {/* display number of tasks */}
           <span className = 'text-2xl font-semibold'>{count}</span>
-          {/* display number of tasks last month*/}
-          <span className = 'text-sm text-gray-400'>{'110 last month'}</span>
         </div>
 
         {/*create icon on right side of card */}
